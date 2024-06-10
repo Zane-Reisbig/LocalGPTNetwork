@@ -3,16 +3,12 @@ from .Types import ChatMessage
 
 class Keeper:
     def __init__(self) -> None:
-        self.messageLog: ChatMessage = []
+        self.chatHistory = []
 
-    def addMessage(self, message: ChatMessage | str):
-        if type(message) != ChatMessage:
-            message = ChatMessage(message)
-
-        self.messageLog.append(message)
-
-    def serialize(self):
-        return [item.original for item in self.messageLog]
+    def addChat(self, message: ChatMessage):
+        # TODO:
+        # Do this more
+        self.chatHistory.append(message)
 
     def returnNTokens(self, tokenAmount=2048):
         total = 0

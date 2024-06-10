@@ -14,9 +14,13 @@ clientWrapper = ChatWrapper(client, model)
 
 
 def main():
-    print(clientWrapper.generateChat("Hello!"))
-    print(clientWrapper.generateChat("Say the word 'howdy'"))
-    print(clientWrapper.generateChat("What was the last thing you said?"))
+    # Llama 2 hates using its memory, after i even so carefully
+    # gave it a message history
+    clientWrapper.generateChat("Hello!")
+    clientWrapper.generateChat("Say the word 'howdy', thats it. only the word 'howdy'")
+    clientWrapper.generateChat("What was the last thing you said?, verbatim")
+
+    [print(item) for item in clientWrapper.getAssistantMessages()]
 
 
 main()
