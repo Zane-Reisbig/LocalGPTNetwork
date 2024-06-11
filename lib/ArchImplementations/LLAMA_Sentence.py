@@ -13,6 +13,7 @@ class LLAMA_Sentence:
     sentence: str = ""
     userMessage: str = None
     modelMessage: str = None
+    tokenLength: int = 0
 
     isStarted = False
     isSystem = False
@@ -24,7 +25,6 @@ class LLAMA_Sentence:
     __setIsUserTrace = uuid1()
     __setPromptContentTrace = uuid1()
     __endTrace = uuid1()
-    __runTrace = uuid1()
 
     @staticmethod
     def start(isSystem: bool = False):
@@ -63,14 +63,14 @@ class LLAMA_Sentence:
 
         self.lastCalled = self.__setIsUserTrace
 
-    def setPromptContent(self, content: str, addNoise: bool = False):
+    def setPromptContent(self, content: str, addMsgId: bool = True):
         assert self.lastCalled in [
             self.__startTrace,
             self.__setIsSystemTrace,
             self.__setIsUserTrace,
         ], "The 'Prompt Content' may only be set after the 'start()' or 'setIsSystem()' functions"
 
-        if addNoise:
+        if addMsgId:
             self.sentence += "[MSGID]" + str(uuid1()) + "[/MSGID]"
 
         self.sentence += content
@@ -91,6 +91,19 @@ class LLAMA_Sentence:
         # self.sentence += LLAMA_MessageTokens.CHAT_END
 
         self.lastCalled = self.__endTrace
+        self.tokenLength = len(self.sentence.split(" "))
+
+        # fmt: off
+
+        self.tokenLength += len(LLAMA_MessageTokens.CHAT_START.value)
+
+        self.tokenLength += len(LLAMA_MessageTokens.SYSTEM.value) if self.isSystem else 0
+        self.tokenLength += len(LLAMA_MessageTokens.SYSTEM_CLOSE.value) if self.isSystem else 0
+
+        self.tokenLength += len(LLAMA_MessageTokens.INSTANCE_START.value)
+        self.tokenLength += len(LLAMA_MessageTokens.INSTANCE_END.value)
+
+        # fmt: on
 
 
 if __name__ == "__main__":
@@ -110,7 +123,7 @@ if __name__ == "__main__":
 
     x: LLAMA_Sentence = LLAMA_Sentence.start()
     x.setPromptContent(
-        content=summarizeText + "\n---\n" + "Summarize that text", addNoise=True
+        content=summarizeText + "\n---\n" + "Summarize that text", addMsgId=True
     )
     x.end()
     x.run(model=models[0], client=creds, temperature=0, max_tokens=999)

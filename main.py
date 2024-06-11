@@ -19,19 +19,25 @@ def main():
     with open(path) as file:
         summarizeText = file.read()
 
-    one = LLAMA_Sentence.start()
-    one.setPromptContent(
-        content=summarizeText + "\n---\n" + "Summarize that text", addNoise=True
-    )
-    one.end()
+    # one = LLAMA_Sentence.start()
+    # one.setPromptContent(content=summarizeText + "\n---\n" + "Summarize that text")
+    # one.end()
 
-    two = LLAMA_Sentence.start()
-    two.setPromptContent("Do you know what movie that's from?", addNoise=True)
-    two.end()
+    # print(chatMan.run(one))
 
-    chatMan = ChatManager(creds, models[0])
-    chatMan.run(one)
-    chatMan.run(two, True)
+    chatMan = ChatManager(creds, models[0], historyTokenLimit=1200)
+
+    newMsg = LLAMA_Sentence.start()
+    newMsg.setPromptContent(input("Init: "))
+    newMsg.end()
+    print(chatMan.run(newMsg, appendHistory=True))
+
+    while True:
+        newMsg = LLAMA_Sentence.start()
+        newMsg.setPromptContent(input("Response: "))
+        newMsg.end()
+
+        print(chatMan.run(newMsg, appendHistory=True))
 
 
 main()

@@ -1,2 +1,4 @@
 /.venv
 /.vscode
+lib/__pycache__*
+lib/ArchImplementations/__pycache__/*
