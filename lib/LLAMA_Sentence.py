@@ -133,9 +133,8 @@ if __name__ == "__main__":
     creds = OpenAI(api_key="None", base_url=localURL)
 
     summarizeText = None
-    with open(
-        r"C:\Users\zaned\Desktop\Non-Education\_Code\_Python\LocalGPTNetwork\SavingPrivateRyan.txt"
-    ) as file:
+    path = os.getcwd() + r"\SavingPrivateRyan.txt"
+    with open(path) as file:
         summarizeText = file.read()
 
     x: LLAMA_Sentence = LLAMA_Sentence.start()
