@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from uuid import uuid1, UUID
 
 if __name__ == "__main__":
-    from Types import LLAMA_MessageTokens
+    from lib.Types.Types import LLAMA_MessageTokens
 else:
-    from .Types import LLAMA_MessageTokens
+    from ..Types.Types import LLAMA_MessageTokens
 
 
 @dataclass
@@ -91,35 +91,6 @@ class LLAMA_Sentence:
         # self.sentence += LLAMA_MessageTokens.CHAT_END
 
         self.lastCalled = self.__endTrace
-
-    def run(self, client: OpenAI, model: str, **kwargs) -> str:
-        assert (
-            self.lastCalled is self.__endTrace
-        ), "Can't run the prompt without 'end()'-ing it first"
-        self.lastCalled = self.__runTrace
-
-        _max_tokens = kwargs.get("max_tokens", 999)
-        kwargs.pop("max_tokens", None)
-
-        _frequency_penalty = kwargs.get("frequency_penalty", 1.18)
-        kwargs.pop("frequency_penalty", None)
-
-        res = client.chat.completions.create(
-            messages=[
-                {
-                    "content": self.sentence,
-                    "role": "system" if self.isSystem else "user",
-                },
-            ],
-            model=model,
-            frequency_penalty=_frequency_penalty,
-            max_tokens=_max_tokens,
-            **kwargs,
-        )
-
-        self.modelMessage = res.choices[0].message.content
-        self.sentence += self.modelMessage
-        self.sentence += LLAMA_MessageTokens.CHAT_END.value
 
 
 if __name__ == "__main__":
